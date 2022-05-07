@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@300;400;500;800&display=swap');
+
+:root{
+    
+    --normal: 20px;
+    --title: 38px;
+    --subtitle: 30px;
+    --shadow: 2px 6px 21px -1px rgba(82,82,82,0.5);
+    --black: #131111d3;
+    --white: rgb(238, 233, 230);
+    --orange: rgb(255, 60, 0);
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-size: var(--normal);
+    font-family: 'Merriweather Sans', sans-serif;
+    transition: all 200ms ease-in;
+}
+
+.heroDiv{
+    height: 100vh;
+    background-color: var(--orange);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    position: relative;
+}
+
+.heroDiv h1{
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: var(--subtitle);
+}
+
+.heroDiv p{
+    font-size: var(--title);
+}
+
+.heroDiv label{
+    font-size: var(--normal);
+    align-self: flex-end;
+    margin: 1rem;
+}
+
+.heroDiv p:last-child{
+
+    position: absolute;
+    bottom: 1rem;
+
+}
