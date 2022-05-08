@@ -32,7 +32,7 @@ var Home = (function (){
         const createP = document.createElement("button");
         const deleteP = document.createElement("button");
         createP.classList.add("createProject");
-        createP.classList.add("deleteProject");
+        deleteP.classList.add("deleteProject");
         createP.textContent = "Create project";
         deleteP.textContent = "Delete this project";
         title.textContent = "Your todos";

@@ -91,7 +91,27 @@ header{
     align-items: center;
     grid-row: 1;
     border-bottom: rgb(240, 117, 45) solid 5px;
-    
+}
+
+button{
+    padding: 1rem;
+    color: var(--white);
+    background-color: rgb(240, 117, 45);
+    border: var(--orange) solid 3px;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+button:hover{
+    cursor: pointer;
+}
+
+.createProject:hover{
+    background-color: rgb(72, 158, 72);
+}
+
+.deleteProject:hover{
+    background-color: rgb(218, 21, 21);
 }
 
 main{
@@ -100,7 +120,7 @@ main{
 }
 
 .leftPanel{
-    background-color: var(--orange);
+    background-image: linear-gradient(var(--orange), rgb(255, 30, 0));
     color: var(--white);
     padding-top: 1rem;
     grid-column: 1;
