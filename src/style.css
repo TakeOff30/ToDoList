@@ -5,7 +5,7 @@
     --normal: 20px;
     --title: 38px;
     --subtitle: 30px;
-    --shadow: 2px 6px 21px -1px rgba(82,82,82,0.5);
+    --shadow: 5px 5px 5px 0px rgba(177, 170, 166, 0.5);
     --black: #131111d3;
     --white: rgb(238, 233, 230);
     --orange: rgb(255, 60, 0);
@@ -15,14 +15,13 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-size: var(--normal);
     font-family: 'Merriweather Sans', sans-serif;
     transition: all 200ms ease-in;
 }
 
 .heroDiv{
     height: 100vh;
-    background-color: var(--orange);
+    background-image: linear-gradient(rgb(240, 117, 45), var(--orange));
     color: var(--white);
     display: flex;
     flex-direction: column;
@@ -46,7 +45,7 @@
 .heroDiv label{
     font-size: var(--normal);
     align-self: flex-end;
-    margin: 1rem;
+    margin-right: 5%;
 }
 
 .heroDiv p:last-child{
@@ -55,3 +54,70 @@
     bottom: 1rem;
 
 }
+
+.heroDiv p:last-child::after{
+
+    content: url("img/arrow-down.png");
+    width: 20px;
+    position: relative;
+    top: 0px;
+    animation-name: arrow;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes arrow {
+    from { top: 0px; }
+    to {top: 10px; }
+}
+
+.hedMain{
+    height: 100vh;
+    background-color: var(--white);
+    color: var(--orange);
+    display: grid;
+    grid-template-rows: 1fr 6fr;
+}
+
+.hedMain button, .hedMain header{
+    box-shadow: var(--shadow);
+}
+
+header{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    grid-row: 1;
+    border-bottom: rgb(240, 117, 45) solid 5px;
+    
+}
+
+main{
+    display: grid;
+    grid-auto-columns: 1fr 3fr;
+}
+
+.leftPanel{
+    background-color: var(--orange);
+    color: var(--white);
+    padding-top: 1rem;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+
+}
+
+.leftPanel label{
+    font-size: var(--normal);
+}
+
+.mainPanel{
+    padding: 1rem;
+    grid-column: 2;
+}
+
+
