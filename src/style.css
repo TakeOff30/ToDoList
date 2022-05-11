@@ -140,4 +140,12 @@ main{
     grid-column: 2;
 }
 
+.modal{
+    opacity: 1;
+    transition: opacity 200ms ease-in;
+}
+
+.active{
+    opacity: 0;
+}
 

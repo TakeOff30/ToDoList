@@ -1,6 +1,15 @@
-
+import Project from './projects';
 
 var Home = (function (){
+
+    const projects = [];
+    const mainProject = new Project("Main tasklist");
+    let actualProject = mainProject;
+    const hedMain = document.createElement("div");
+    hedMain.classList.add("hedMain");
+    const overlay = document.createElement("div");
+    overlay.classList.add("overlay");
+
 
     function createHero(container){
 
@@ -31,13 +40,28 @@ var Home = (function (){
         const title = document.createElement("h1");
         const createP = document.createElement("button");
         const deleteP = document.createElement("button");
+        const createT = document.createElement("button");
         createP.classList.add("createProject");
+        createT.classList.add("createProject");
         deleteP.classList.add("deleteProject");
-        createP.textContent = "Create project";
+        createP.textContent = "Create new project";
         deleteP.textContent = "Delete this project";
+        createT.textContent = "Add task";
         title.textContent = "Your todos";
 
-        //eventlisteners for buttons
+        createT.addEventListener("click", ()=>{
+            createTaskModal(hedMain);
+        });
+
+        createP.addEventListener("click", ()=>{
+            createProjectModal(hedMain);
+        });
+        
+        deleteP.addEventListener("click", ()=>{
+            projects.pop(actualProject);
+            actualProject = mainProject;
+            createMain(hedMain);
+        });
 
         header.appendChild(title);
         header.appendChild(createP);
@@ -47,27 +71,57 @@ var Home = (function (){
 
     function createMain(container){
 
+
         const main = document.createElement("main");
         const leftPanel = document.createElement("div");
         leftPanel.classList.add("leftPanel");
         const mainTaskTitle = document.createElement("h2");
-        mainTaskTitle.textContent = "Main tasklist";
+        mainTaskTitle.textContent = mainProject.name;
+        mainTaskTitle.setAttribute("data-index", i);
+        i++;
         const projectsListTitle = document.createElement("h2");
         projectsListTitle.textContent = "Your projects";
-
+        
         leftPanel.appendChild(mainTaskTitle);
         leftPanel.appendChild(projectsListTitle);
 
         const mainPanel = document.createElement("div");
         mainPanel.classList.add("mainPanel");
         const title = document.createElement("h1");
-        title.textContent = "Main tasklist";
+        title.textContent = mainProject.name;
+        
         const tasklist = document.createElement("div");
         tasklist.classList.add("tasklist");
 
-        //add tasks to tasklist
+        projects.forEach(project => {
+
+            const proTitle = document.createElement("p");
+            proTitle.textContent = project.name;
+            proTitle.setAttribute("data-index", i);
+            i++;
+            
+            proTitle.addEventListener("click", () => {
+
+                mainPanel.textContent = "";
+                title = document.createElement("h1");
+                title.textContent = project.name;
+        
+                tasklist = document.createElement("div");
+                tasklist.classList.add("tasklist");
+
+                mainPanel.appendChild(title);
+                projects[parseInt(proTitle.getAttribute("data-index"))].showProject(tasklist);
+                actualProject = projects[parseInt(proTitle.getAttribute("data-index"))];
+                mainPanel.appendChild(tasklist);
+
+            });
+
+            leftPanel.appendChild(proTitle);
+
+        });
 
         mainPanel.appendChild(title);
+        actualProject.showProject(tasklist);
         mainPanel.appendChild(tasklist);
 
         main.appendChild(leftPanel);
@@ -78,17 +132,96 @@ var Home = (function (){
 
     }
 
+    function createProjectModal(container){
+
+        const projectInput = document.createElement("div");
+        const proLabel = document.createElement("label");
+        const inputElem = document.createElement("input");
+        const projectButton = document.createElement("button");
+
+        proLabel.textContent = "Project name: ";
+        inputElem.setAttribute("type", "text");
+        projectInput.classList.add("projectForm");
+
+        projectButton.textContent = "Create";
+        projectButton.addEventListener("click", ()=>{
+            projects.push(new Project(inputElem.value))
+        });
+
+        projectInput.appendChild(proLabel);
+        projectInput.appendChild(inputElem);
+        projectInput.appendChild(projectButton);
+        projectInput.classList.add("modal");
+        projectInput.classList.add("active");
+        container.appendChild(projectInput);
+
+
+    }
+
+    function createTaskModal(container){
+
+        const taskInput = document.createElement("div");
+        const taskName = document.createElement("label");
+        const taskDesc = document.createElement("label")
+        taskDesc.textContent = "Task description: ";
+        taskName.textContent = "Task name: ";
+        taskName.setAttribute("for", "nameInput");
+        taskName.setAttribute("for", "descInput");
+        const inputName = document.createElement("input");
+        const inputDesc = document.createElement("textarea");
+        inputName.setAttribute("id", "nameInput");
+        inputName.setAttribute("id", "descInput");
+        inputName.setAttribute("type", "text");
+        inputDesc.setAttribute("type", "text");
+
+        const taskPrioLabel = document.createElement("label");
+        taskPrioLabel.textContent = "Select the priority: ";
+        taskPrioLabel.setAttribute("for", "prioInput");
+        const taskPriority = document.createElement("select");
+        taskPriority.setAttribute("id", "prioInput");
+        const urgent = document.createElement("option");
+        const important = document.createElement("option");
+        const notImportant = document.createElement("option");
+        urgent.textContent = "Urgent";
+        important.textContent = "Important";
+        notImportant.textContent = "Not that important";
+        taskPriority.appendChild(urgent);
+        taskPriority.appendChild(important);
+        taskPriority.appendChild(notImportant);
+
+        const taskDateLabel = document.createElement("label");
+        taskDateLabel.textContent = "Select the expiring date: ";
+        taskDateLabel.setAttribute("for", "dateInput");
+        const inputDate = document.createElement("input");
+        inputDate.setAttribute("type", "date");
+        inputDate.setAttribute("id", "dateInput");
+
+
+        const taskButton = document.createElement("button");
+        
+        taskInput.classList.add("taskForm");
+        taskButton.textContent = "Create";
+        taskButton.addEventListener("click", () => {
+            actualProject.createTask(inputName.value, taskPriority.value, inputDesc.value, dateInput.value);
+        });
+
+        taskInput.appendChild(taskLabel);
+        taskInput.appendChild(inputElem);
+        taskInput.appendChild(taskButton);
+        taskInput.classList.add("modal");
+        taskInput.classList.add("active");
+        container.appendChild(projectInput);
+
+    }
+
     function showHomepage(container){
 
         createHero(container);
-
-        const hedMain = document.createElement("div");
-        hedMain.classList.add("hedMain");
-
         createHeader(hedMain);
         createMain(hedMain);
         
         container.appendChild(hedMain);
+        container.appendChild(overlay);
     }
 
     return {
