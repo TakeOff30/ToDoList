@@ -1,14 +1,15 @@
-import Project from './projects';
+import { Project } from './projects';
 
 var Home = (function (){
 
     const projects = [];
-    const mainProject = new Project("Main tasklist");
+    const mainProject = Project("Main tasklist");
     let actualProject = mainProject;
     const hedMain = document.createElement("div");
     hedMain.classList.add("hedMain");
     const overlay = document.createElement("div");
     overlay.classList.add("overlay");
+    let i = 0;
 
 
     function createHero(container){
@@ -145,7 +146,7 @@ var Home = (function (){
 
         projectButton.textContent = "Create";
         projectButton.addEventListener("click", ()=>{
-            projects.push(new Project(inputElem.value))
+            projects.push(Project(inputElem.value))
         });
 
         projectInput.appendChild(proLabel);

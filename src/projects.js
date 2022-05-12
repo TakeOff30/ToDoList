@@ -5,7 +5,7 @@ const Project = (name) => {
     const tasks = [];
 
     function createTask(name, priority, description, dueDate){
-        let task = new Task(name, priority, description, dueDate);
+        let task = Task(name, priority, description, dueDate);
         tasks.push(task);
     }
 
