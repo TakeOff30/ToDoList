@@ -1,5 +1,8 @@
 import { Project } from './projects';
 
+//devo anche pulire gli input quando il modal viene chiuso
+//
+
 var Home = (function (){
 
     const projects = [];
@@ -11,6 +14,20 @@ var Home = (function (){
     overlay.classList.add("overlay");
     let i = 0;
 
+    overlay.addEventListener("click", ()=>{
+
+        const projectInput = document.querySelector(".projectForm");
+        const taskInput = document.querySelector(".taskForm");
+
+        if (projectInput == null) {
+            hedMain.removeChild(taskInput); 
+        }else{
+            hedMain.removeChild(projectInput);
+        }
+        
+        
+        overlay.classList.remove("active")
+    })
 
     function createHero(container){
 
@@ -52,10 +69,12 @@ var Home = (function (){
 
         createT.addEventListener("click", ()=>{
             createTaskModal(hedMain);
+            overlay.classList.add("active");
         });
 
         createP.addEventListener("click", ()=>{
             createProjectModal(hedMain);
+            overlay.classList.add("active");
         });
         
         deleteP.addEventListener("click", ()=>{
@@ -65,6 +84,7 @@ var Home = (function (){
         });
 
         header.appendChild(title);
+        header.appendChild(createT);
         header.appendChild(createP);
         header.appendChild(deleteP);
         container.appendChild(header);
@@ -146,14 +166,15 @@ var Home = (function (){
 
         projectButton.textContent = "Create";
         projectButton.addEventListener("click", ()=>{
-            projects.push(Project(inputElem.value))
+            projects.push(Project(inputElem.value));
+            container.removeChild(projectInput);
+            overlay.classList.remove("active");
         });
 
         projectInput.appendChild(proLabel);
         projectInput.appendChild(inputElem);
         projectInput.appendChild(projectButton);
-        projectInput.classList.add("modal");
-        projectInput.classList.add("active");
+        projectInput.classList.add("activeModal");
         container.appendChild(projectInput);
 
 
@@ -162,17 +183,19 @@ var Home = (function (){
     function createTaskModal(container){
 
         const taskInput = document.createElement("div");
+
         const taskName = document.createElement("label");
-        const taskDesc = document.createElement("label")
-        taskDesc.textContent = "Task description: ";
         taskName.textContent = "Task name: ";
         taskName.setAttribute("for", "nameInput");
         taskName.setAttribute("for", "descInput");
         const inputName = document.createElement("input");
-        const inputDesc = document.createElement("textarea");
-        inputName.setAttribute("id", "nameInput");
-        inputName.setAttribute("id", "descInput");
         inputName.setAttribute("type", "text");
+        inputName.setAttribute("id", "nameInput");
+
+        const taskDesc = document.createElement("label")
+        taskDesc.textContent = "Task description: ";
+        const inputDesc = document.createElement("textarea");
+        inputDesc.setAttribute("id", "descInput");
         inputDesc.setAttribute("type", "text");
 
         const taskPrioLabel = document.createElement("label");
@@ -197,21 +220,30 @@ var Home = (function (){
         inputDate.setAttribute("type", "date");
         inputDate.setAttribute("id", "dateInput");
 
-
         const taskButton = document.createElement("button");
         
         taskInput.classList.add("taskForm");
         taskButton.textContent = "Create";
         taskButton.addEventListener("click", () => {
             actualProject.createTask(inputName.value, taskPriority.value, inputDesc.value, dateInput.value);
+            container.removeChild(taskInput);
+            overlay.classList.remove("active");
         });
 
-        taskInput.appendChild(taskLabel);
-        taskInput.appendChild(inputElem);
+        taskInput.appendChild(taskName);
+        taskInput.appendChild(inputName);
+
+        taskInput.appendChild(taskDesc);
+        taskInput.appendChild(inputDesc);
+
+        taskInput.appendChild(taskDateLabel);
+        taskInput.appendChild(inputDate);
+
+        taskInput.appendChild(taskPriority);
+
         taskInput.appendChild(taskButton);
-        taskInput.classList.add("modal");
-        taskInput.classList.add("active");
-        container.appendChild(projectInput);
+        taskInput.classList.add("activeModal");
+        container.appendChild(taskInput);
 
     }
 
