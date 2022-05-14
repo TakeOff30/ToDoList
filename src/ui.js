@@ -1,7 +1,6 @@
 import { Project } from './projects';
 
-//devo anche pulire gli input quando il modal viene chiuso
-//
+//add projects to the left panel, update the tasklist switch between projects
 
 var Home = (function (){
 
@@ -13,6 +12,7 @@ var Home = (function (){
     const overlay = document.createElement("div");
     overlay.classList.add("overlay");
     let i = 0;
+    const mainPanel = document.createElement("div");
 
     overlay.addEventListener("click", ()=>{
 
@@ -106,7 +106,7 @@ var Home = (function (){
         leftPanel.appendChild(mainTaskTitle);
         leftPanel.appendChild(projectsListTitle);
 
-        const mainPanel = document.createElement("div");
+        
         mainPanel.classList.add("mainPanel");
         const title = document.createElement("h1");
         title.textContent = mainProject.name;
@@ -226,6 +226,7 @@ var Home = (function (){
         taskButton.textContent = "Create";
         taskButton.addEventListener("click", () => {
             actualProject.createTask(inputName.value, taskPriority.value, inputDesc.value, dateInput.value);
+            actualProject.showProject(mainPanel);
             container.removeChild(taskInput);
             overlay.classList.remove("active");
         });

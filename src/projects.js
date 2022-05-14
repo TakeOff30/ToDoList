@@ -10,7 +10,7 @@ const Project = (name) => {
     }
 
     function showProject(container){
-
+        container.textContent = "";
         this.tasks.forEach( task => {
 
             task.showTask(container);

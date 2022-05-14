@@ -6,9 +6,9 @@ const Task = (name, priority, description, dueDate) => {
         const taskDiv = document.createElement("div");
         taskDiv.classList.add("task");
         const taskName = document.createElement("h2");
-        taskName.textContent = name;
+        taskName.textContent = this.name;
         const taskDate = document.createElement("p");
-        taskDate.textContent = dueDate;
+        taskDate.textContent = this.dueDate;
         
         if(this.priority == "Urgent"){
             taskDiv.classList.add("urgent");
@@ -17,7 +17,8 @@ const Task = (name, priority, description, dueDate) => {
         }else{
             taskDiv.classList.add("notImportant");
         }
-
+        taskDiv.appendChild(taskName);
+        taskDiv.appendChild(taskDate);
         div.appendChild(taskDiv);
     }
 
