@@ -136,6 +136,13 @@ main{
 }
 
 .mainPanel{
+    display: flex;
+    flex-direction: column;
+    grid-column: 2;
+    padding: 2rem;
+}
+
+.tasklist{
     padding: 1rem;
     grid-column: 2;
     display: grid;

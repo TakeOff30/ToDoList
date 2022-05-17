@@ -6,6 +6,7 @@ var Home = (function (){
 
     const projects = [];
     const mainProject = Project("Main tasklist");
+    projects.push(mainProject);
     let actualProject = mainProject;
     const hedMain = document.createElement("div");
     hedMain.classList.add("hedMain");
@@ -13,6 +14,9 @@ var Home = (function (){
     overlay.classList.add("overlay");
     let i = 0;
     const mainPanel = document.createElement("div");
+    mainPanel.classList.add("mainPanel");
+    const leftPanel = document.createElement("div");
+    leftPanel.classList.add("leftPanel");
 
     overlay.addEventListener("click", ()=>{
 
@@ -75,12 +79,23 @@ var Home = (function (){
         createP.addEventListener("click", ()=>{
             createProjectModal(hedMain);
             overlay.classList.add("active");
+            
         });
         
         deleteP.addEventListener("click", ()=>{
-            projects.pop(actualProject);
-            actualProject = mainProject;
-            createMain(hedMain);
+            if (actualProject == mainProject) {
+                mainPanel.textContent = "";
+                mainProject.tasks = [];
+                mainProject.showProject(mainPanel);
+                //fix mainpanel creation
+            }else{
+                projects.pop(actualProject);
+                updateLeftPanel();
+                mainPanel.textContent = "";
+                actualProject = mainProject;
+                mainProject.showProject(mainPanel);
+            }
+            
         });
 
         header.appendChild(title);
@@ -94,55 +109,19 @@ var Home = (function (){
 
 
         const main = document.createElement("main");
-        const leftPanel = document.createElement("div");
-        leftPanel.classList.add("leftPanel");
-        const mainTaskTitle = document.createElement("h2");
-        mainTaskTitle.textContent = mainProject.name;
-        mainTaskTitle.setAttribute("data-index", i);
-        i++;
         const projectsListTitle = document.createElement("h2");
         projectsListTitle.textContent = "Your projects";
         
-        leftPanel.appendChild(mainTaskTitle);
         leftPanel.appendChild(projectsListTitle);
 
-        
-        mainPanel.classList.add("mainPanel");
-        const title = document.createElement("h1");
-        title.textContent = mainProject.name;
-        
-        const tasklist = document.createElement("div");
+        updateLeftPanel();
+        let title = document.createElement("h1");
+        title.textContent = actualProject.name;
+        let tasklist = document.createElement("div");
         tasklist.classList.add("tasklist");
 
-        projects.forEach(project => {
-
-            const proTitle = document.createElement("p");
-            proTitle.textContent = project.name;
-            proTitle.setAttribute("data-index", i);
-            i++;
-            
-            proTitle.addEventListener("click", () => {
-
-                mainPanel.textContent = "";
-                title = document.createElement("h1");
-                title.textContent = project.name;
-        
-                tasklist = document.createElement("div");
-                tasklist.classList.add("tasklist");
-
-                mainPanel.appendChild(title);
-                projects[parseInt(proTitle.getAttribute("data-index"))].showProject(tasklist);
-                actualProject = projects[parseInt(proTitle.getAttribute("data-index"))];
-                mainPanel.appendChild(tasklist);
-
-            });
-
-            leftPanel.appendChild(proTitle);
-
-        });
-
-        mainPanel.appendChild(title);
         actualProject.showProject(tasklist);
+        mainPanel.appendChild(title);
         mainPanel.appendChild(tasklist);
 
         main.appendChild(leftPanel);
@@ -151,6 +130,42 @@ var Home = (function (){
         container.appendChild(main);
 
 
+    }
+
+    function updateLeftPanel(){
+        leftPanel.textContent = "";
+        i = 0;
+        projects.forEach(project => {
+        
+            let proTitle = document.createElement("p");
+            proTitle.textContent = project.name;
+            proTitle.setAttribute("data-index", i);
+            i++;
+            let title = document.createElement("h1");
+            title.textContent = project.name;
+            let tasklist = document.createElement("div");
+            tasklist.classList.add("tasklist");
+        
+            proTitle.addEventListener("click", () => {
+
+                mainPanel.textContent = "";
+                title.textContent = project.name;
+                tasklist.textContent = "";
+
+                mainPanel.appendChild(title);
+                //something wrong
+                console.log(proTitle.getAttribute("data-index"))
+                let i = parseInt(proTitle.getAttribute("data-index"));
+                projects[i].showProject(tasklist);
+                actualProject = projects[parseInt(proTitle.getAttribute("data-index"))];
+                mainPanel.appendChild(tasklist);
+                
+            });
+
+            leftPanel.appendChild(proTitle);
+
+
+        });
     }
 
     function createProjectModal(container){
@@ -167,8 +182,10 @@ var Home = (function (){
         projectButton.textContent = "Create";
         projectButton.addEventListener("click", ()=>{
             projects.push(Project(inputElem.value));
+            //update left
             container.removeChild(projectInput);
             overlay.classList.remove("active");
+            updateLeftPanel();
         });
 
         projectInput.appendChild(proLabel);
@@ -226,7 +243,8 @@ var Home = (function (){
         taskButton.textContent = "Create";
         taskButton.addEventListener("click", () => {
             actualProject.createTask(inputName.value, taskPriority.value, inputDesc.value, dateInput.value);
-            actualProject.showProject(mainPanel);
+            let tasklist = document.querySelector(".tasklist")
+            actualProject.showProject(tasklist);
             container.removeChild(taskInput);
             overlay.classList.remove("active");
         });
