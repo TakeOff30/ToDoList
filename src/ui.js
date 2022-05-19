@@ -1,6 +1,12 @@
 import { Project } from './projects';
 
-//add projects to the left panel, update the tasklist switch between projects
+//expand tasks
+//fix main project deleting
+//confirmation prompt
+//updating task priority and date
+//local storage
+
+
 
 var Home = (function (){
 

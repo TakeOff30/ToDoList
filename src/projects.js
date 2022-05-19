@@ -3,9 +3,11 @@ import Task from './tasks'
 const Project = (name) => {
 
     const tasks = [];
+    let i = 0;
 
     function createTask(name, priority, description, dueDate){
-        let task = Task(name, priority, description, dueDate);
+        let task = Task(name, priority, description, dueDate, i);
+        i++;
         tasks.push(task);
     }
 

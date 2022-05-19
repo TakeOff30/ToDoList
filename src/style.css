@@ -193,6 +193,14 @@ main{
     border: var(--orange) solid 4px;
     border-radius: 10px;
     height: auto;
+    position: relative;
+}
+
+.task img{
+    width: 30px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
 
 .important{
