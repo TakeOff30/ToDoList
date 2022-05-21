@@ -2,12 +2,12 @@ import expandA from '../src/img/expandArrows.svg';
 import compressA from '../src/img/compressArrows.svg';
 const Task = (name, priority, description, dueDate, i) => {
 
-    //BUG: need some attributes to identify every task 
+    
     let taskId = i;
-
+    let taskDiv;
 
     function showTask(div){
-        const taskDiv = document.createElement("div");
+        taskDiv = document.createElement("div");
         taskDiv.classList.add("task");
         taskDiv.setAttribute("data-task-index", taskId);
         const taskName = document.createElement("h2");
@@ -28,6 +28,16 @@ const Task = (name, priority, description, dueDate, i) => {
         expandImage.setAttribute("src", expandA);
         expandImage.setAttribute("alt", "button to expand information about the task");
         expandImage.addEventListener("click", ()=>{
+            
+            const opened = document.getElementsByClassName("large");
+            Array.prototype.forEach.call(opened, open =>{
+                
+                if (open != null) {
+                    compressTask(open);
+                }
+                
+            });
+
             if (compressed) {
                 expandTask(taskDiv);
                 expandImage.setAttribute("src", compressA);
@@ -74,44 +84,71 @@ const Task = (name, priority, description, dueDate, i) => {
         function createRadios(){
 
             urgent = document.createElement("input");
+            urgent.classList.add("radioInputs");
             urgent.setAttribute("type", "radio");
             urgent.setAttribute("name", "prio"+taskId);
+            urgent.setAttribute("value", "urgent");
             important = document.createElement("input");
+            important.classList.add("radioInputs");
             important.setAttribute("type", "radio");
             important.setAttribute("name", "prio"+taskId);
+            important.setAttribute("value", "important");
             notImportant = document.createElement("input");
+            notImportant.classList.add("radioInputs");
             notImportant.setAttribute("type", "radio");
             notImportant.setAttribute("name", "prio"+taskId);
-            if (priority == "Urgent") {
+            notImportant.setAttribute("value", "notImportant");
+            if (priority == "Urgent" || priority == "urgent") {
                 urgent.checked = true;
-            }else if(priority == "Important"){
+            }else if(priority == "Important" || priority == "important"){
                 important.checked = true;
             }else{
                 notImportant.checked = true;
             }
+            taskPrioritySpan.appendChild(urgentLabel);
+            taskPrioritySpan.appendChild(urgent);
+            taskPrioritySpan.appendChild(importantLabel);
+            taskPrioritySpan.appendChild(important);
+            taskPrioritySpan.appendChild(notImportantLabel);
+            taskPrioritySpan.appendChild(notImportant);
+            task.appendChild(taskPrioritySpan);
         }
-        createRadios()
-        taskPrioritySpan.appendChild(urgentLabel);
-        taskPrioritySpan.appendChild(urgent);
-        taskPrioritySpan.appendChild(importantLabel);
-        taskPrioritySpan.appendChild(important);
-        taskPrioritySpan.appendChild(notImportantLabel);
-        taskPrioritySpan.appendChild(notImportant);
-        task.appendChild(taskPrioritySpan);
+        createRadios();
+        let radios = document.getElementsByClassName('radioInputs');
+        Array.prototype.forEach.call(radios, radio => {
+            radio.addEventListener("click", ()=>{
+                const taskDiv = document.querySelector("[data-task-index='"+i+"']")
+                if(radio.getAttribute('type')=='radio'){
+                    if (taskDiv.classList.contains("urgent")) {
+                        taskDiv.classList.replace("urgent", radio.value);
+                        priority = radio.value;
+                    }else if(taskDiv.classList.contains("important")){
+                        taskDiv.classList.replace("important", radio.value);
+                        priority = radio.value;
+                    }else{
+                        taskDiv.classList.replace("notImportant", radio.value);
+                        priority = radio.value;
+                    }
+                }
+                
 
+            });
+        });
+        
+        
     }
 
     function compressTask(task){
 
-        const taskDesc = document.querySelector(".taskDescription"+taskId);
+        const taskDesc = document.querySelector(".taskDescription"+task.getAttribute("data-task-index"));
         task.removeChild(taskDesc);
-        const taskSpan = document.querySelector("#prioSpan"+taskId);
+        const taskSpan = document.querySelector("#prioSpan"+task.getAttribute("data-task-index"));
         task.removeChild(taskSpan);
 
     }
 
     return {
-        name, priority, description, dueDate, showTask, expandTask
+        name, priority, description, dueDate, i, showTask, expandTask
     }
 }
 
