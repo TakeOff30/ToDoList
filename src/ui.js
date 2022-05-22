@@ -23,6 +23,7 @@ var Home = (function (){
     mainPanel.classList.add("mainPanel");
     const leftPanel = document.createElement("div");
     leftPanel.classList.add("leftPanel");
+    let tasklist;
 
     overlay.addEventListener("click", ()=>{
 
@@ -89,17 +90,18 @@ var Home = (function (){
         });
         
         deleteP.addEventListener("click", ()=>{
+            tasklist = document.querySelector(".tasklist");
             if (actualProject == mainProject) {
-                mainPanel.textContent = "";
+                tasklist.textContent = "";
                 mainProject.tasks = [];
-                mainProject.showProject(mainPanel);
+                mainProject.showProject(tasklist);
                 //fix mainpanel creation
             }else{
                 projects.pop(actualProject);
                 updateLeftPanel();
-                mainPanel.textContent = "";
+                tasklist.textContent = "";
                 actualProject = mainProject;
-                mainProject.showProject(mainPanel);
+                mainProject.showProject(tasklist);
             }
             
         });

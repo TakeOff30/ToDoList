@@ -13,6 +13,10 @@ const Task = (name, priority, description, dueDate, i) => {
         const taskName = document.createElement("h2");
         taskName.textContent = this.name;
         const taskDate = document.createElement("p");
+        const closeButton = document.createElement("img");
+        closeButton.setAttribute("src", "../src/img/close.svg")
+        closeButton.setAttribute("alt","close button");
+        closeButton.classList.add("closeButton");
         taskDate.textContent = this.dueDate;
         let compressed = true;
         
@@ -29,16 +33,8 @@ const Task = (name, priority, description, dueDate, i) => {
         expandImage.setAttribute("alt", "button to expand information about the task");
         expandImage.addEventListener("click", ()=>{
             
-            const opened = document.getElementsByClassName("large");
-            Array.prototype.forEach.call(opened, open =>{
-                
-                if (open != null) {
-                    compressTask(open);
-                }
-                
-            });
-
             if (compressed) {
+
                 expandTask(taskDiv);
                 expandImage.setAttribute("src", compressA);
                 taskDiv.classList.add("large"); 
@@ -54,7 +50,8 @@ const Task = (name, priority, description, dueDate, i) => {
         })
         taskDiv.appendChild(taskName);
         taskDiv.appendChild(taskDate);
-        taskDiv.appendChild(expandImage)
+        taskDiv.appendChild(expandImage);
+        taskDiv.appendChild(closeButton);
         div.appendChild(taskDiv);
     }
 
@@ -84,17 +81,17 @@ const Task = (name, priority, description, dueDate, i) => {
         function createRadios(){
 
             urgent = document.createElement("input");
-            urgent.classList.add("radioInputs");
+            urgent.classList.add("radioInputs"+taskId);
             urgent.setAttribute("type", "radio");
             urgent.setAttribute("name", "prio"+taskId);
             urgent.setAttribute("value", "urgent");
             important = document.createElement("input");
-            important.classList.add("radioInputs");
+            important.classList.add("radioInputs"+taskId);
             important.setAttribute("type", "radio");
             important.setAttribute("name", "prio"+taskId);
             important.setAttribute("value", "important");
             notImportant = document.createElement("input");
-            notImportant.classList.add("radioInputs");
+            notImportant.classList.add("radioInputs"+taskId);
             notImportant.setAttribute("type", "radio");
             notImportant.setAttribute("name", "prio"+taskId);
             notImportant.setAttribute("value", "notImportant");
@@ -114,7 +111,7 @@ const Task = (name, priority, description, dueDate, i) => {
             task.appendChild(taskPrioritySpan);
         }
         createRadios();
-        let radios = document.getElementsByClassName('radioInputs');
+        let radios = document.getElementsByClassName('radioInputs'+taskId);
         Array.prototype.forEach.call(radios, radio => {
             radio.addEventListener("click", ()=>{
                 const taskDiv = document.querySelector("[data-task-index='"+i+"']")
