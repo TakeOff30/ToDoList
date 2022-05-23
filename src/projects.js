@@ -2,13 +2,17 @@ import Task from './tasks'
 
 const Project = (name) => {
 
-    const tasks = [];
+    let tasks = [];
     let i = 0;
 
     function createTask(name, priority, description, dueDate){
         let task = Task(name, priority, description, dueDate, i);
         i++;
         tasks.push(task);
+    }
+
+    function removeTask(index){
+        tasks.splice(index,index);
     }
 
     function showProject(container){
@@ -22,8 +26,8 @@ const Project = (name) => {
     }
 
     return {
-        name, tasks, createTask, showProject
+        name, tasks, createTask, removeTask, showProject
     }
 }
 
-export { Project };
+export default Project;

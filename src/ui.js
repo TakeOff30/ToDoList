@@ -1,12 +1,4 @@
-import { Project } from './projects';
-
-//expand tasks
-//fix main project deleting
-//confirmation prompt
-//updating task priority and date
-//local storage
-
-
+import Project from './projects';
 
 var Home = (function (){
 
@@ -90,21 +82,21 @@ var Home = (function (){
         });
         
         deleteP.addEventListener("click", ()=>{
-            tasklist = document.querySelector(".tasklist");
+            tasklist = document.querySelector(".tasklist")
             if (actualProject == mainProject) {
-                tasklist.textContent = "";
                 mainProject.tasks = [];
                 mainProject.showProject(tasklist);
-                //fix mainpanel creation
             }else{
                 projects.pop(actualProject);
                 updateLeftPanel();
-                tasklist.textContent = "";
                 actualProject = mainProject;
+                let title = document.querySelector(".mainPanel h1");
+                title.textContent = actualProject.name;
                 mainProject.showProject(tasklist);
             }
             
         });
+        
 
         header.appendChild(title);
         header.appendChild(createT);
@@ -161,7 +153,6 @@ var Home = (function (){
                 tasklist.textContent = "";
 
                 mainPanel.appendChild(title);
-                //something wrong
                 console.log(proTitle.getAttribute("data-index"))
                 let i = parseInt(proTitle.getAttribute("data-index"));
                 projects[i].showProject(tasklist);
@@ -190,7 +181,6 @@ var Home = (function (){
         projectButton.textContent = "Create";
         projectButton.addEventListener("click", ()=>{
             projects.push(Project(inputElem.value));
-            //update left
             container.removeChild(projectInput);
             overlay.classList.remove("active");
             updateLeftPanel();
@@ -251,10 +241,19 @@ var Home = (function (){
         taskButton.textContent = "Create";
         taskButton.addEventListener("click", () => {
             actualProject.createTask(inputName.value, taskPriority.value, inputDesc.value, dateInput.value);
-            let tasklist = document.querySelector(".tasklist")
+            tasklist = document.querySelector(".tasklist");
             actualProject.showProject(tasklist);
             container.removeChild(taskInput);
             overlay.classList.remove("active");
+            const deleteT = document.querySelectorAll(".closeButton");
+            deleteT.forEach( (button) => {
+                button.addEventListener("click", () => {
+                    
+                    actualProject.tasks.splice(button.getAttribute("data-task-index"));
+                    actualProject.showProject(tasklist);
+                }
+                );
+            });
         });
 
         taskInput.appendChild(taskName);

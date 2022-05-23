@@ -1,3 +1,4 @@
+import Project from './projects';
 import expandA from '../src/img/expandArrows.svg';
 import compressA from '../src/img/compressArrows.svg';
 const Task = (name, priority, description, dueDate, i) => {
@@ -17,6 +18,7 @@ const Task = (name, priority, description, dueDate, i) => {
         closeButton.setAttribute("src", "../src/img/close.svg")
         closeButton.setAttribute("alt","close button");
         closeButton.classList.add("closeButton");
+        closeButton.setAttribute("data-task-index", taskId);
         taskDate.textContent = this.dueDate;
         let compressed = true;
         
