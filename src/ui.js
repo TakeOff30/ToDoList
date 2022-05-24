@@ -8,6 +8,7 @@ var Home = (function (){
     let actualProject = mainProject;
     const hedMain = document.createElement("div");
     hedMain.classList.add("hedMain");
+    hedMain.setAttribute("id","main");
     const overlay = document.createElement("div");
     overlay.classList.add("overlay");
     let i = 0;
@@ -38,7 +39,9 @@ var Home = (function (){
         heroDiv.classList.add("heroDiv");
 
         const title = document.createElement("h1");
-        title.textContent = "Todo List";
+        const scrollLink = document.createElement("a");
+        scrollLink.textContent = "Todo List";
+        scrollLink.setAttribute("href","#main");
 
         const divText = document.createElement("p");
         const authorCredit = document.createElement("label");
@@ -46,7 +49,7 @@ var Home = (function (){
         suggText.textContent = "We are here to help you remember.";
         divText.textContent = '"Time moves in one direction, memory in another."';
         authorCredit.textContent = "William Gibson";
-
+        title.appendChild(scrollLink);
         heroDiv.appendChild(title);
         heroDiv.appendChild(divText);
         heroDiv.appendChild(authorCredit);
@@ -65,6 +68,7 @@ var Home = (function (){
         createP.classList.add("createProject");
         createT.classList.add("createProject");
         deleteP.classList.add("deleteProject");
+        deleteP.classList.add("disabledButton");
         createP.textContent = "Create new project";
         deleteP.textContent = "Delete this project";
         createT.textContent = "Add task";
@@ -91,6 +95,7 @@ var Home = (function (){
                 let title = document.querySelector(".mainPanel h1");
                 title.textContent = actualProject.name;
                 mainProject.showProject(tasklist);
+                deleteP.classList.add("disabledButton");
             }
             
         });
@@ -143,18 +148,24 @@ var Home = (function (){
             title.textContent = project.name;
             let tasklist = document.createElement("div");
             tasklist.classList.add("tasklist");
+            
         
             proTitle.addEventListener("click", () => {
 
                 mainPanel.textContent = "";
                 title.textContent = project.name;
                 tasklist.textContent = "";
-
+                const deleteP = document.querySelector(".deleteProject");
                 mainPanel.appendChild(title);
                 console.log(proTitle.getAttribute("data-index"))
                 let i = parseInt(proTitle.getAttribute("data-index"));
                 projects[i].showProject(tasklist);
                 actualProject = projects[parseInt(proTitle.getAttribute("data-index"))];
+                if (actualProject == mainProject) {
+                    deleteP.classList.add("disabledButton");
+                }else{
+                    deleteP.classList.remove("disabledButton");
+                }
                 mainPanel.appendChild(tasklist);
                 
             });

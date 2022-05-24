@@ -18,10 +18,12 @@
     font-family: 'Merriweather Sans', sans-serif;
     transition: all 200ms ease-in;
 }
-
+html {
+    scroll-behavior: smooth;
+}
 .heroDiv{
     height: 100vh;
-    background-image: linear-gradient(rgb(240, 117, 45), var(--orange));
+    background-image: linear-gradient(var(--orange), rgb(235, 165, 60));
     color: var(--white);
     display: flex;
     flex-direction: column;
@@ -38,7 +40,13 @@
     font-size: var(--subtitle);
 }
 
+.heroDiv a{
+    text-decoration: none;
+    color: var(--white);
+}
+
 .heroDiv p{
+    padding-left: 1rem;
     font-size: var(--title);
 }
 
@@ -114,6 +122,18 @@ button:hover{
     background-color: rgb(218, 21, 21);
 }
 
+.disabledButton{
+    background-color: grey;
+    color: var(--black);
+    border-color: var(--black);
+    
+}
+
+.disabledButton:hover{
+    background-color: grey;
+    cursor: not-allowed;
+}
+
 main{
     display: grid;
     grid-auto-columns: 1fr 3fr;
@@ -151,7 +171,7 @@ main{
     grid-column: 2;
     display: grid;
     grid-template-columns: repeat( auto-fit, minmax(200px, 1fr));
-    grid-template-rows: repeat(auto-fit, minmax(200px, max-content));
+    grid-template-rows: repeat(auto-fit, auto);
     gap: 1rem;
 }
 
@@ -198,6 +218,8 @@ main{
     border-radius: 10px;
     height: auto;
     position: relative;
+    box-shadow: var(--shadow);
+    white-space: pre-line;
 }
 
 .task img{
@@ -217,7 +239,7 @@ main{
 }
 
 .important{
-    background-color: rgb(206, 206, 80);
+    background-color: rgb(221, 187, 36);
 }
 .notImportant{
     background-color: rgb(91, 165, 91);
