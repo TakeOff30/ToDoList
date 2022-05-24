@@ -83,10 +83,8 @@ var Home = (function (){
         
         deleteP.addEventListener("click", ()=>{
             tasklist = document.querySelector(".tasklist")
-            if (actualProject == mainProject) {
-                mainProject.tasks = [];
-                mainProject.showProject(tasklist);
-            }else{
+            
+            if (actualProject != mainProject) {
                 projects.pop(actualProject);
                 updateLeftPanel();
                 actualProject = mainProject;
@@ -245,12 +243,14 @@ var Home = (function (){
             actualProject.showProject(tasklist);
             container.removeChild(taskInput);
             overlay.classList.remove("active");
-            const deleteT = document.querySelectorAll(".closeButton");
+            let deleteT = document.querySelectorAll(".closeButton");
             deleteT.forEach( (button) => {
                 button.addEventListener("click", () => {
                     
-                    actualProject.tasks.splice(button.getAttribute("data-task-index"));
+                    actualProject.removeTask(button.getAttribute("data-task-index"));
+                    
                     actualProject.showProject(tasklist);
+
                 }
                 );
             });

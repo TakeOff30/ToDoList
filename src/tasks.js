@@ -50,6 +50,7 @@ const Task = (name, priority, description, dueDate, i) => {
             
 
         })
+
         taskDiv.appendChild(taskName);
         taskDiv.appendChild(taskDate);
         taskDiv.appendChild(expandImage);

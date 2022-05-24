@@ -12,14 +12,24 @@ const Project = (name) => {
     }
 
     function removeTask(index){
-        tasks.splice(index,index);
+        tasks[index] = null;
     }
 
     function showProject(container){
         container.textContent = "";
         this.tasks.forEach( task => {
-
-            task.showTask(container);
+            if (task != null) {
+                task.showTask(container);
+                const closeB = document.querySelectorAll(".closeButton");
+                closeB.forEach((button) => {
+                    button.addEventListener("click", ()=>{
+                        this.removeTask(button.getAttribute("data-task-index"));
+                        
+                        this.showProject(container);
+                    })
+                })
+            }
+            
 
         });
 
