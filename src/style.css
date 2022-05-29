@@ -213,15 +213,50 @@ main{
 
 .task{
     padding: 1rem;
+    padding-right: 2rem;
     color: var(--white);
     border: var(--orange) solid 4px;
     border-radius: 10px;
-    height: auto;
+    min-height: 100px;
     position: relative;
     box-shadow: var(--shadow);
-    white-space: pre-line;
+    transition: min-height 1s;
 }
 
+.task .large{
+    min-height: auto;
+}
+.task p{
+    overflow-wrap: break-word;
+}
+
+.task input{
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 50%;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+}
+.task input::before{
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--orange);
+}
+
+.task input:checked::before {
+    transform: scale(1);
+}
 .task img{
     width: 30px;
     position: absolute;
@@ -239,7 +274,7 @@ main{
 }
 
 .important{
-    background-color: rgb(221, 187, 36);
+    background-color: rgb(228, 172, 19);
 }
 .notImportant{
     background-color: rgb(91, 165, 91);

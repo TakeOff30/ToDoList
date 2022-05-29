@@ -1,10 +1,10 @@
 import Task from './tasks'
 
-const Project = (name) => {
+const Project = (name, tasks) => {
 
-    let tasks = [];
     let i = 0;
 
+    
     function createTask(name, priority, description, dueDate){
         let task = Task(name, priority, description, dueDate, i);
         i++;

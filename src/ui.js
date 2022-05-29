@@ -1,11 +1,47 @@
 import Project from './projects';
+import Task from './tasks';
+
+
 
 var Home = (function (){
+    let projects = [];
+    let ciao = Project("ciao", []);
+    console.log(ciao);
+    let storedCiao = JSON.stringify(ciao)
+    localStorage.setItem("ciao", storedCiao);
+    let retrivedCiao = localStorage.getItem("ciao")
+    retrivedCiao = JSON.parse(retrivedCiao)
+    let restoreCiao = Project(retrivedCiao.name, retrivedCiao.tasks)
+    console.log(restoreCiao)
+    if (!localStorage.getItem('projects')) {
+        projects = [];
+    }else{
+        let retrivedProjects = localStorage.getItem('projects');
+        retrivedProjects = JSON.parse(retrivedProjects);
+        console.log(retrivedProjects)
 
-    const projects = [];
-    const mainProject = Project("Main tasklist");
-    projects.push(mainProject);
-    let actualProject = mainProject;
+        retrivedProjects.forEach(retrived =>{
+            let retrivedTasks = [];
+            console.log(retrived.tasks)
+            retrived.tasks.forEach(task =>{
+                retrivedTasks.push(Task(task.name, task.priority, task.description, task.dueDate, task.i))
+            });
+            projects.push(Project(retrived.name, retrivedTasks))
+        });
+    }
+
+    let mainProject;
+    let actualProject;
+    if (projects.length == 0) {
+        mainProject = Project("main tasklist", []);
+        projects.push(mainProject);
+        window.localStorage.setItem('projects', JSON.stringify(projects));
+        actualProject = mainProject;
+    }else{
+        mainProject = projects[0];
+        actualProject = mainProject;
+    }
+    
     const hedMain = document.createElement("div");
     hedMain.classList.add("hedMain");
     hedMain.setAttribute("id","main");
@@ -90,6 +126,7 @@ var Home = (function (){
             
             if (actualProject != mainProject) {
                 projects.pop(actualProject);
+                window.localStorage.setItem('projects', JSON.stringify(projects));
                 updateLeftPanel();
                 actualProject = mainProject;
                 let title = document.querySelector(".mainPanel h1");
@@ -110,11 +147,9 @@ var Home = (function (){
 
     function createMain(container){
 
-
         const main = document.createElement("main");
         const projectsListTitle = document.createElement("h2");
         projectsListTitle.textContent = "Your projects";
-        
         leftPanel.appendChild(projectsListTitle);
 
         updateLeftPanel();
@@ -122,7 +157,6 @@ var Home = (function (){
         title.textContent = actualProject.name;
         let tasklist = document.createElement("div");
         tasklist.classList.add("tasklist");
-
         actualProject.showProject(tasklist);
         mainPanel.appendChild(title);
         mainPanel.appendChild(tasklist);
@@ -157,10 +191,25 @@ var Home = (function (){
                 tasklist.textContent = "";
                 const deleteP = document.querySelector(".deleteProject");
                 mainPanel.appendChild(title);
-                console.log(proTitle.getAttribute("data-index"))
-                let i = parseInt(proTitle.getAttribute("data-index"));
-                projects[i].showProject(tasklist);
-                actualProject = projects[parseInt(proTitle.getAttribute("data-index"))];
+                let i = proTitle.getAttribute("data-index");
+                tasklist.textContent = "";
+                actualProject = projects[i];
+                actualProject.tasks.forEach( task => {
+                    if (task != null) {
+                        task.showTask(tasklist);
+                        const closeB = document.querySelectorAll(".closeButton");
+                        closeB.forEach((button) => {
+                            button.addEventListener("click", ()=>{
+                                this.removeTask(button.getAttribute("data-task-index"));
+                                
+                                this.showProject(tasklist);
+                            })
+                        })
+                    }
+                    
+        
+                });
+                
                 if (actualProject == mainProject) {
                     deleteP.classList.add("disabledButton");
                 }else{
@@ -189,7 +238,8 @@ var Home = (function (){
 
         projectButton.textContent = "Create";
         projectButton.addEventListener("click", ()=>{
-            projects.push(Project(inputElem.value));
+            projects.push(Project(inputElem.value, []));
+            window.localStorage.setItem('projects', JSON.stringify(projects));
             container.removeChild(projectInput);
             overlay.classList.remove("active");
             updateLeftPanel();
@@ -250,6 +300,7 @@ var Home = (function (){
         taskButton.textContent = "Create";
         taskButton.addEventListener("click", () => {
             actualProject.createTask(inputName.value, taskPriority.value, inputDesc.value, dateInput.value);
+            window.localStorage.setItem('projects', JSON.stringify(projects));
             tasklist = document.querySelector(".tasklist");
             actualProject.showProject(tasklist);
             container.removeChild(taskInput);
@@ -259,7 +310,7 @@ var Home = (function (){
                 button.addEventListener("click", () => {
                     
                     actualProject.removeTask(button.getAttribute("data-task-index"));
-                    
+                    window.localStorage.setItem('projects', JSON.stringify(projects))
                     actualProject.showProject(tasklist);
 
                 }
@@ -285,7 +336,6 @@ var Home = (function (){
     }
 
     function showHomepage(container){
-
         createHero(container);
         createHeader(hedMain);
         createMain(hedMain);
