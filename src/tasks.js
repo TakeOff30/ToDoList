@@ -1,3 +1,4 @@
+import Home from './ui';
 import Project from './projects';
 import expandA from '../src/img/expandArrows.svg';
 import compressA from '../src/img/compressArrows.svg';
@@ -117,17 +118,21 @@ const Task = (name, priority, description, dueDate, i) => {
         let radios = document.getElementsByClassName('radioInputs'+taskId);
         Array.prototype.forEach.call(radios, radio => {
             radio.addEventListener("click", ()=>{
-                const taskDiv = document.querySelector("[data-task-index='"+i+"']")
+                const taskDiv = document.querySelector("[data-task-index='"+taskId+"']")
+                
                 if(radio.getAttribute('type')=='radio'){
                     if (taskDiv.classList.contains("urgent")) {
                         taskDiv.classList.replace("urgent", radio.value);
                         priority = radio.value;
+                        window.localStorage.setItem('projects', JSON.stringify(Home.projects))
                     }else if(taskDiv.classList.contains("important")){
                         taskDiv.classList.replace("important", radio.value);
                         priority = radio.value;
+                        window.localStorage.setItem('projects', JSON.stringify(Home.projects))
                     }else{
                         taskDiv.classList.replace("notImportant", radio.value);
                         priority = radio.value;
+                        window.localStorage.setItem('projects', JSON.stringify(Home.projects))
                     }
                 }
                 

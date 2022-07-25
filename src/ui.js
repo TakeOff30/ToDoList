@@ -1,33 +1,36 @@
 import Project from './projects';
 import Task from './tasks';
 
-
-
 var Home = (function (){
+
     let projects = [];
-    let ciao = Project("ciao", []);
-    console.log(ciao);
-    let storedCiao = JSON.stringify(ciao)
-    localStorage.setItem("ciao", storedCiao);
-    let retrivedCiao = localStorage.getItem("ciao")
-    retrivedCiao = JSON.parse(retrivedCiao)
-    let restoreCiao = Project(retrivedCiao.name, retrivedCiao.tasks)
-    console.log(restoreCiao)
+
+    function orderIndex(project){
+        let c = 0;
+        project.tasks.forEach(task=>{
+            task.i = c;
+            c++;
+        });
+    }
+
     if (!localStorage.getItem('projects')) {
         projects = [];
     }else{
         let retrivedProjects = localStorage.getItem('projects');
         retrivedProjects = JSON.parse(retrivedProjects);
-        console.log(retrivedProjects)
-
         retrivedProjects.forEach(retrived =>{
             let retrivedTasks = [];
-            console.log(retrived.tasks)
+            console.log(retrived);
             retrived.tasks.forEach(task =>{
-                retrivedTasks.push(Task(task.name, task.priority, task.description, task.dueDate, task.i))
+                if (task!=null) {
+                    retrivedTasks.push(Task(task.name, task.priority, task.description, task.dueDate, task.i))
+                }
+                
+                
             });
             projects.push(Project(retrived.name, retrivedTasks))
         });
+        
     }
 
     let mainProject;
@@ -47,12 +50,12 @@ var Home = (function (){
     hedMain.setAttribute("id","main");
     const overlay = document.createElement("div");
     overlay.classList.add("overlay");
-    let i = 0;
     const mainPanel = document.createElement("div");
     mainPanel.classList.add("mainPanel");
     const leftPanel = document.createElement("div");
     leftPanel.classList.add("leftPanel");
     let tasklist;
+    let i = 0;
 
     overlay.addEventListener("click", ()=>{
 
@@ -150,14 +153,18 @@ var Home = (function (){
         const main = document.createElement("main");
         const projectsListTitle = document.createElement("h2");
         projectsListTitle.textContent = "Your projects";
-        leftPanel.appendChild(projectsListTitle);
 
+        leftPanel.appendChild(projectsListTitle);
         updateLeftPanel();
+
         let title = document.createElement("h1");
         title.textContent = actualProject.name;
+
         let tasklist = document.createElement("div");
         tasklist.classList.add("tasklist");
+        orderIndex(actualProject);
         actualProject.showProject(tasklist);
+
         mainPanel.appendChild(title);
         mainPanel.appendChild(tasklist);
 
@@ -194,21 +201,7 @@ var Home = (function (){
                 let i = proTitle.getAttribute("data-index");
                 tasklist.textContent = "";
                 actualProject = projects[i];
-                actualProject.tasks.forEach( task => {
-                    if (task != null) {
-                        task.showTask(tasklist);
-                        const closeB = document.querySelectorAll(".closeButton");
-                        closeB.forEach((button) => {
-                            button.addEventListener("click", ()=>{
-                                this.removeTask(button.getAttribute("data-task-index"));
-                                
-                                this.showProject(tasklist);
-                            })
-                        })
-                    }
-                    
-        
-                });
+                actualProject.showProject(tasklist)
                 
                 if (actualProject == mainProject) {
                     deleteP.classList.add("disabledButton");
@@ -305,17 +298,7 @@ var Home = (function (){
             actualProject.showProject(tasklist);
             container.removeChild(taskInput);
             overlay.classList.remove("active");
-            let deleteT = document.querySelectorAll(".closeButton");
-            deleteT.forEach( (button) => {
-                button.addEventListener("click", () => {
-                    
-                    actualProject.removeTask(button.getAttribute("data-task-index"));
-                    window.localStorage.setItem('projects', JSON.stringify(projects))
-                    actualProject.showProject(tasklist);
-
-                }
-                );
-            });
+            addRemoveButtonListeners(tasklist);
         });
 
         taskInput.appendChild(taskName);
@@ -335,18 +318,32 @@ var Home = (function (){
 
     }
 
+    function addRemoveButtonListeners(container){
+
+        let deleteT = document.querySelectorAll(".closeButton");
+        deleteT.forEach(button=> {
+            button.addEventListener("click", () => {
+
+                actualProject.removeTask(button.getAttribute("data-task-index"));
+                window.localStorage.setItem('projects', JSON.stringify(projects));
+
+            });
+        });
+
+    }
+
     function showHomepage(container){
         createHero(container);
         createHeader(hedMain);
         createMain(hedMain);
-        
         container.appendChild(hedMain);
         container.appendChild(overlay);
+        addRemoveButtonListeners(tasklist)
     }
 
     return {
 
-        showHomepage
+        showHomepage, addRemoveButtonListeners, projects
 
     }
 
