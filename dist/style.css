@@ -1,0 +1,286 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@300;400;500;800&display=swap');
+
+:root {
+    --normal: 20px;
+    --title: 38px;
+    --subtitle: 30px;
+    --shadow: 5px 5px 5px 0px rgba(177, 170, 166, 0.5);
+    --black: #131111d3;
+    --white: rgb(238, 233, 230);
+    --orange: rgb(255, 60, 0);
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Merriweather Sans', sans-serif;
+    transition: all 200ms ease-in;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.heroDiv {
+    height: 100vh;
+    background-image: linear-gradient(var(--orange), rgb(235, 165, 60));
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    position: relative;
+}
+
+.heroDiv h1 {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: var(--subtitle);
+}
+
+.heroDiv a {
+    text-decoration: none;
+    color: var(--white);
+}
+
+.heroDiv p {
+    padding-left: 1rem;
+    font-size: var(--title);
+}
+
+.heroDiv label {
+    font-size: var(--normal);
+    align-self: flex-end;
+    margin-right: 5%;
+}
+
+.heroDiv p:last-child {
+    position: absolute;
+    bottom: 1rem;
+}
+
+.heroDiv p:last-child::after {
+    content: url('img/arrow-down.png');
+    width: 20px;
+    position: relative;
+    top: 0px;
+    animation-name: arrow;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-out;
+}
+
+@keyframes arrow {
+    from {
+        top: 0px;
+    }
+    to {
+        top: 10px;
+    }
+}
+
+.hedMain {
+    height: 100vh;
+    background-color: var(--white);
+    color: var(--orange);
+    display: grid;
+    grid-template-rows: 1fr 6fr;
+}
+
+.hedMain button,
+.hedMain header {
+    box-shadow: var(--shadow);
+}
+
+header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    grid-row: 1;
+    border-bottom: rgb(240, 117, 45) solid 5px;
+}
+
+button {
+    padding: 1rem;
+    color: var(--white);
+    background-color: rgb(240, 117, 45);
+    border: var(--orange) solid 3px;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+.createProject:hover {
+    background-color: rgb(72, 158, 72);
+}
+
+.deleteProject:hover {
+    background-color: rgb(218, 21, 21);
+}
+
+.disabledButton {
+    background-color: grey;
+    color: var(--black);
+    border-color: var(--black);
+}
+
+.disabledButton:hover {
+    background-color: grey;
+    cursor: not-allowed;
+}
+
+main {
+    display: grid;
+    grid-auto-columns: 1fr 3fr;
+}
+
+.leftPanel {
+    background-image: linear-gradient(var(--orange), rgb(255, 30, 0));
+    color: var(--white);
+    padding-top: 1rem;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.leftPanel label {
+    font-size: var(--normal);
+}
+
+.leftPanel p {
+    cursor: pointer;
+}
+
+.mainPanel {
+    display: flex;
+    flex-direction: column;
+    grid-column: 2;
+    padding: 2rem;
+}
+
+.tasklist {
+    padding: 1rem;
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fit, auto);
+    gap: 1rem;
+}
+
+.taskForm,
+.projectForm {
+    padding: 1rem;
+    color: var(--orange);
+    background-color: var(--white);
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: 200ms ease-in-out;
+    border-radius: 10px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: var(--orange) solid 4px;
+}
+
+.activeModal {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+    pointer-events: none;
+}
+
+.overlay.active {
+    background-color: rgba(0, 0, 0, 0.6);
+    pointer-events: all;
+}
+
+.task {
+    padding: 1rem;
+    padding-right: 2rem;
+    color: var(--white);
+    border: var(--orange) solid 4px;
+    border-radius: 10px;
+    min-height: 100px;
+    position: relative;
+    box-shadow: var(--shadow);
+    transition: min-height 1s;
+}
+
+.task .large {
+    min-height: auto;
+}
+.task p {
+    overflow-wrap: break-word;
+}
+
+.task input {
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 50%;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+}
+.task input::before {
+    content: '';
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--orange);
+}
+
+.task input:checked::before {
+    transform: scale(1);
+}
+.task img {
+    width: 30px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.task img.closeButton {
+    width: 20px;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.important {
+    background-color: rgb(228, 172, 19);
+}
+.notImportant {
+    background-color: rgb(91, 165, 91);
+}
+.urgent {
+    background-color: rgb(207, 83, 83);
+}
