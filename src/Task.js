@@ -1,9 +1,11 @@
 export default class Task {
-    constructor(name, dueDate, priority, notes) {
+    constructor(name, dueDate, priority, notes, taskId) {
         (this.name = name),
             (this.dueDate = dueDate),
             (this.priority = priority),
-            (this.notes = notes);
+            (this.notes = notes),
+            (this.compressed = true),
+            (this.taskId = taskId);
     }
 
     setName(name) {
@@ -12,14 +14,6 @@ export default class Task {
 
     getName() {
         return this.name;
-    }
-
-    setDate(dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    getDate() {
-        return this.dueDate;
     }
 
     setPriority(priority) {

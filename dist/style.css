@@ -117,7 +117,8 @@ button:hover {
     cursor: pointer;
 }
 
-.createProject:hover {
+.createProject:hover,
+.createTask:hover {
     background-color: rgb(72, 158, 72);
 }
 

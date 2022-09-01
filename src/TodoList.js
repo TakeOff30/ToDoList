@@ -14,6 +14,18 @@ export default class TodoList {
         return this.projects;
     }
 
+    getProject(index) {
+        return this.projects[index];
+    }
+
+    setProject(toSet) {
+        this.projects.find((project) => {
+            if (project.getName() == toSet.getName()) {
+                project = toSet;
+            }
+        });
+    }
+
     addProject(newProject) {
         this.projects.push(newProject);
     }

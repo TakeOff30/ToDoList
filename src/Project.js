@@ -19,6 +19,10 @@ export default class Project {
         return this.tasks;
     }
 
+    getTask(taskId) {
+        return this.tasks.find((task) => task.taskId == taskId);
+    }
+
     addTask(toAdd) {
         this.tasks.push(toAdd);
     }

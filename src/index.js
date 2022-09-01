@@ -1,3 +1,3 @@
-import UI from './UI';
+import UserInterface from './UI';
 
-document.addEventListener('DOMContentLoaded', UI.showHomepage);
+document.addEventListener('DOMContentLoaded', UserInterface.showHomepage);
