@@ -10,21 +10,21 @@ const UserInterface = (function () {
     let projectIndex = 0;
     let taskId = 0;
 
-    function loadProjects() {
+    function UIProjectSetup() {
         if (localStorage.getItem('todoList')) {
             todoList = Storage.getTodoList();
-            console.log(todoList);
-            actualProject = todoList.getProject(0);
-            updateProjectList(todoList.getProjects());
-            updateTasklist(actualProject);
+            UIInfoSetup();
         } else {
             todoList = new TodoList();
-            actualProject = todoList.getProject(0);
-            console.log(actualProject);
-            updateProjectList(todoList.getProjects());
-            updateTasklist(actualProject);
+            UIInfoSetup();
             Storage.saveTodoList(todoList);
         }
+    }
+
+    function UIInfoSetup() {
+        actualProject = todoList.getProject(0);
+        updateProjectList(todoList.getProjects());
+        updateTasklist(actualProject);
     }
 
     function updateProjectList(projects) {
@@ -35,19 +35,23 @@ const UserInterface = (function () {
         leftPanel.appendChild(title);
         projectIndex = 0;
         projects.forEach((project) => {
-            let proTitle = document.createElement('p');
-            proTitle.textContent = project.getName();
-            proTitle.setAttribute('data-index', projectIndex);
-            proTitle.classList.add('projectName');
-            projectIndex++;
-            proTitle.addEventListener('click', () => {
-                actualProject = todoList.getProject(
-                    proTitle.getAttribute('data-index')
-                );
-                updateTasklist();
-            });
-            leftPanel.appendChild(proTitle);
+            displayProject(project, leftPanel);
         });
+    }
+
+    function displayProject(project, container) {
+        let proTitle = document.createElement('p');
+        proTitle.textContent = project.getName();
+        proTitle.setAttribute('data-index', projectIndex);
+        proTitle.classList.add('projectName');
+        projectIndex++;
+        proTitle.addEventListener('click', () => {
+            actualProject = todoList.getProject(
+                proTitle.getAttribute('data-index')
+            );
+            updateTasklist();
+        });
+        container.appendChild(proTitle);
     }
 
     function updateTasklist() {
@@ -57,96 +61,123 @@ const UserInterface = (function () {
         title.textContent = actualProject.getName();
         tasklist.appendChild(title);
         actualProject.getTasks().forEach((task) => {
-            task.compressed = true;
-            const taskDiv = document.createElement('div');
-            taskDiv.setAttribute('data-task-index', task.taskId);
-            taskDiv.classList.add('task');
-            const taskName = document.createElement('h2');
-            taskName.textContent = task.name;
-            const taskDate = document.createElement('p');
-            const closeButton = document.createElement('img');
-            closeButton.setAttribute('src', '../dist/img/close.svg');
-            closeButton.setAttribute('alt', 'close button');
-            closeButton.classList.add('closeButton');
+            createTask(task, tasklist);
+            taskId++;
+        });
+    }
 
-            closeButton.addEventListener('click', () => {
-                const dataToRemove = actualProject.getTask(
-                    closeButton.getAttribute('data-task-index')
-                );
-                const contentToRemove = document.querySelector(
-                    '[data-task-index = "' +
-                        closeButton.getAttribute('data-task-index') +
-                        '"]'
-                );
-                actualProject.deleteTask(dataToRemove);
-                todoList.setProject(actualProject);
-                Storage.saveTodoList(todoList);
-                tasklist.removeChild(contentToRemove);
-            });
+    function createTask(task, container) {
+        task.compressed = true;
+        const taskDiv = document.createElement('div');
+        taskDiv.setAttribute('data-task-index', task.taskId);
+        taskDiv.classList.add('task');
+        const taskName = document.createElement('h2');
+        taskName.textContent = task.name;
+        const taskDate = document.createElement('p');
+        taskDate.textContent = task.dueDate;
 
-            closeButton.setAttribute('data-task-index', task.taskId);
-            taskDate.textContent = task.dueDate;
+        createCloseButton(taskDiv, task);
+        setTaskPriority(task, taskDiv);
+        createToggleIconButton(taskDiv, task);
 
-            if (task.priority == 'urgent' || task.priority == 'Urgent') {
-                taskDiv.classList.add('urgent');
-            } else if (
-                task.priority == 'important' ||
-                task.priority == 'Important'
-            ) {
-                taskDiv.classList.add('important');
-            } else {
-                taskDiv.classList.add('notImportant');
-            }
+        taskDiv.appendChild(taskName);
+        taskDiv.appendChild(taskDate);
+        container.appendChild(taskDiv);
+    }
 
-            const expandImage = document.createElement('img');
-            expandImage.classList.add('expandIcon');
-            expandImage.setAttribute('src', '../dist/img/expandArrows.svg');
-            expandImage.setAttribute(
-                'alt',
-                'button to expand information about the task'
+    function createCloseButton(taskContainer, task) {
+        const closeButton = document.createElement('img');
+        closeButton.setAttribute('src', '../dist/img/close.svg');
+        closeButton.setAttribute('alt', 'close button');
+        closeButton.classList.add('closeButton');
+        setCloseButtonListener(closeButton);
+        closeButton.setAttribute('data-task-index', task.taskId);
+        taskContainer.appendChild(closeButton);
+    }
+
+    function setCloseButtonListener(button) {
+        button.addEventListener('click', () => {
+            const tasklist = document.querySelector('.tasklist');
+            const dataToRemove = actualProject.getTask(
+                button.getAttribute('data-task-index')
             );
-            expandImage.addEventListener('click', () => {
-                if (task.compressed) {
-                    expandTask(task);
-                    expandImage.setAttribute(
-                        'src',
-                        '../dist/img/compressArrows.svg'
-                    );
-                    taskDiv.classList.add('large');
-                    task.compressed = false;
-                } else {
-                    compressTask(task);
-                    expandImage.setAttribute(
-                        'src',
-                        '../dist/img/expandArrows.svg'
-                    );
-                    taskDiv.classList.remove('large');
-                    task.compressed = true;
-                    Storage.saveTodoList(todoList);
-                }
-                taskId++;
-            });
+            const contentToRemove = document.querySelector(
+                '[data-task-index = "' +
+                    button.getAttribute('data-task-index') +
+                    '"]'
+            );
+            actualProject.deleteTask(dataToRemove);
+            todoList.setProject(actualProject);
+            Storage.saveTodoList(todoList);
+            tasklist.removeChild(contentToRemove);
+        });
+    }
 
-            taskDiv.appendChild(taskName);
-            taskDiv.appendChild(taskDate);
-            taskDiv.appendChild(expandImage);
-            taskDiv.appendChild(closeButton);
-            tasklist.appendChild(taskDiv);
+    function setTaskPriority(task, taskContainer) {
+        if (task.priority == 'urgent' || task.priority == 'Urgent') {
+            taskContainer.classList.add('urgent');
+        } else if (
+            task.priority == 'important' ||
+            task.priority == 'Important'
+        ) {
+            taskContainer.classList.add('important');
+        } else {
+            taskContainer.classList.add('notImportant');
+        }
+    }
+
+    function createToggleIconButton(taskContainer, task) {
+        const expandImage = document.createElement('img');
+        expandImage.classList.add('expandIcon');
+        expandImage.setAttribute('src', '../dist/img/expandArrows.svg');
+        expandImage.setAttribute(
+            'alt',
+            'button to expand information about the task'
+        );
+        toggleIconButtonListener(taskContainer, expandImage, task);
+        taskContainer.appendChild(expandImage);
+    }
+
+    function toggleIconButtonListener(taskContainer, icon, task) {
+        icon.addEventListener('click', () => {
+            if (task.compressed) {
+                expandTask(task);
+                icon.setAttribute('src', '../dist/img/compressArrows.svg');
+                taskContainer.classList.add('large');
+                task.compressed = false;
+            } else {
+                compressTask(task);
+                icon.setAttribute('src', '../dist/img/expandArrows.svg');
+                taskContainer.classList.remove('large');
+                task.compressed = true;
+                Storage.saveTodoList(todoList);
+            }
         });
     }
 
     function createProjectModal(container) {
-        const projectInput = document.createElement('div');
+        const projectForm = document.createElement('div');
+        projectForm.classList.add('projectForm');
         const proLabel = document.createElement('label');
-        const inputElem = document.createElement('input');
-        const projectButton = document.createElement('button');
-        const overlay = document.querySelector('.overlay');
         proLabel.textContent = 'Project name: ';
+        const inputElem = document.createElement('input');
         inputElem.setAttribute('type', 'text');
-        projectInput.classList.add('projectForm');
-
+        const projectButton = document.createElement('button');
         projectButton.textContent = 'Create';
-        projectButton.addEventListener('click', () => {
+
+        projectButtonListener(projectButton, projectForm);
+
+        projectForm.appendChild(proLabel);
+        projectForm.appendChild(inputElem);
+        projectForm.appendChild(projectButton);
+        projectForm.classList.add('activeModal');
+        container.appendChild(projectForm);
+    }
+
+    function projectButtonListener(button, form) {
+        button.addEventListener('click', () => {
+            const inputElem = document.querySelector('input');
+            const overlay = document.querySelector('.overlay');
             const newProject = new Project(inputElem.value);
             todoList.addProject(newProject);
             Storage.saveTodoList(todoList);
@@ -154,35 +185,48 @@ const UserInterface = (function () {
             const projectList = document.querySelectorAll('.projectName');
             const lastProject = projectList.length - 1;
             actualProject = todoList.getProject(lastProject);
-            projectInput.classList.remove('activeModal');
+            form.classList.remove('activeModal');
             overlay.classList.remove('active');
         });
-
-        projectInput.appendChild(proLabel);
-        projectInput.appendChild(inputElem);
-        projectInput.appendChild(projectButton);
-        projectInput.classList.add('activeModal');
-        container.appendChild(projectInput);
     }
 
     function createTaskModal(container) {
-        const taskInput = document.createElement('div');
-        const overlay = document.querySelector('.overlay');
+        const taskForm = document.createElement('div');
+        taskForm.classList.add('taskForm');
+        const taskButton = document.createElement('button');
+        taskButton.textContent = 'Create';
+        createTaskNameInput(taskForm);
+        createTaskDescInput(taskForm);
+        createTaskPriorityInput(taskForm);
+        createTaskDateInput(taskForm);
+        createTaskButtonListener(taskButton, taskForm);
+        taskForm.classList.add('activeModal');
+        container.appendChild(taskForm);
+    }
 
+    function createTaskNameInput(container) {
         const taskName = document.createElement('label');
         taskName.textContent = 'Task name: ';
         taskName.setAttribute('for', 'nameInput');
-        taskName.setAttribute('for', 'descInput');
         const inputName = document.createElement('input');
         inputName.setAttribute('type', 'text');
         inputName.setAttribute('id', 'nameInput');
+        container.appendChild(taskName);
+        container.appendChild(inputName);
+    }
 
+    function createTaskDescInput(container) {
         const taskDesc = document.createElement('label');
         taskDesc.textContent = 'Task description: ';
         const inputDesc = document.createElement('textarea');
         inputDesc.setAttribute('id', 'descInput');
+        taskDesc.setAttribute('for', 'descInput');
         inputDesc.setAttribute('type', 'text');
+        container.appendChild(taskDesc);
+        container.appendChild(inputDesc);
+    }
 
+    function createTaskPriorityInput(container) {
         const taskPrioLabel = document.createElement('label');
         taskPrioLabel.textContent = 'Select the priority: ';
         taskPrioLabel.setAttribute('for', 'prioInput');
@@ -197,19 +241,27 @@ const UserInterface = (function () {
         taskPriority.appendChild(urgent);
         taskPriority.appendChild(important);
         taskPriority.appendChild(notImportant);
+        container.appendChild(taskPriority);
+    }
 
+    function createTaskDateInput(container) {
         const taskDateLabel = document.createElement('label');
         taskDateLabel.textContent = 'Select the expiring date: ';
         taskDateLabel.setAttribute('for', 'dateInput');
         const inputDate = document.createElement('input');
         inputDate.setAttribute('type', 'date');
         inputDate.setAttribute('id', 'dateInput');
+        container.appendChild(taskDateLabel);
+        container.appendChild(inputDate);
+    }
 
-        const taskButton = document.createElement('button');
-
-        taskInput.classList.add('taskForm');
-        taskButton.textContent = 'Create';
-        taskButton.addEventListener('click', () => {
+    function createTaskButtonListener(button, container) {
+        button.addEventListener('click', () => {
+            const overlay = document.querySelector('.overlay');
+            const inputName = document.querySelector('#nameInput');
+            const inputDate = document.querySelector('#dateInput');
+            const inputDesc = document.querySelector('#descInput');
+            const taskPriority = document.querySelector('#prioInput');
             const newTask = new Task(
                 inputName.value,
                 inputDate.value,
@@ -221,111 +273,116 @@ const UserInterface = (function () {
             actualProject.addTask(newTask);
             Storage.saveTodoList(todoList);
             updateTasklist(actualProject);
-            taskInput.classList.remove('activeModal');
+            container.classList.remove('activeModal');
             overlay.classList.remove('active');
         });
-
-        taskInput.appendChild(taskName);
-        taskInput.appendChild(inputName);
-
-        taskInput.appendChild(taskDesc);
-        taskInput.appendChild(inputDesc);
-
-        taskInput.appendChild(taskDateLabel);
-        taskInput.appendChild(inputDate);
-
-        taskInput.appendChild(taskPriority);
-
-        taskInput.appendChild(taskButton);
-        taskInput.classList.add('activeModal');
-        container.appendChild(taskInput);
+        container.appendChild(button);
     }
 
     function expandTask(task) {
-        const taskDesc = document.createElement('p');
         const toExpand = document.querySelector(
             "[data-task-index='" + task.taskId + "']"
         );
+
+        addDescField(task, toExpand);
+        addPriorityRadios(task, toExpand);
+
+        let radios = document.getElementsByClassName(
+            'radioInputs' + task.taskId
+        );
+        Array.prototype.forEach.call(radios, (radio) => {
+            radioButtonListener(radio, task);
+        });
+    }
+
+    function addDescField(task, container) {
+        const taskDesc = document.createElement('p');
         taskDesc.textContent = task.description;
         taskDesc.classList.add('taskDescription' + task.taskId);
-        toExpand.appendChild(taskDesc);
+        container.appendChild(taskDesc);
+    }
 
+    function addPriorityRadios(task, container) {
         const taskPrioLabel = document.createElement('label');
         taskPrioLabel.textContent = 'Select the priority: ';
         taskPrioLabel.setAttribute('for', 'prioInput');
         const taskPrioritySpan = document.createElement('span');
         taskPrioritySpan.setAttribute('id', 'prioSpan' + task.taskId);
+
+        createUrgentRadio(task, taskPrioritySpan);
+        createImportantRadio(task, taskPrioritySpan);
+        createNotImportantRadio(task, taskPrioritySpan);
+
+        container.appendChild(taskPrioritySpan);
+    }
+
+    function createUrgentRadio(task, container) {
         const urgentLabel = document.createElement('label');
         urgentLabel.textContent = 'Urgent: ';
+        const urgent = document.createElement('input');
+        urgent.classList.add('radioInputs' + task.taskId);
+        urgent.setAttribute('type', 'radio');
+        urgent.setAttribute('name', 'prio' + task.taskId);
+        urgent.setAttribute('value', 'urgent');
+        container.appendChild(urgentLabel);
+        container.appendChild(urgent);
+        if (task.priority == 'Urgent' || task.priority == 'urgent') {
+            urgent.checked = true;
+        }
+    }
+    function createImportantRadio(task, container) {
         const importantLabel = document.createElement('label');
         importantLabel.textContent = 'Important: ';
+        const important = document.createElement('input');
+        important.classList.add('radioInputs' + task.taskId);
+        important.setAttribute('type', 'radio');
+        important.setAttribute('name', 'prio' + task.taskId);
+        important.setAttribute('value', 'important');
+        container.appendChild(importantLabel);
+        container.appendChild(important);
+        if (task.priority == 'Important' || task.priority == 'important') {
+            important.checked = true;
+        }
+    }
+    function createNotImportantRadio(task, container) {
         const notImportantLabel = document.createElement('label');
         notImportantLabel.textContent = 'Not important: ';
-
-        let urgent;
-        let important;
-        let notImportant;
-
-        function createRadios(task) {
-            urgent = document.createElement('input');
-            urgent.classList.add('radioInputs' + task.taskId);
-            urgent.setAttribute('type', 'radio');
-            urgent.setAttribute('name', 'prio' + task.taskId);
-            urgent.setAttribute('value', 'urgent');
-            important = document.createElement('input');
-            important.classList.add('radioInputs' + task.taskId);
-            important.setAttribute('type', 'radio');
-            important.setAttribute('name', 'prio' + task.taskId);
-            important.setAttribute('value', 'important');
-            notImportant = document.createElement('input');
-            notImportant.classList.add('radioInputs' + task.taskId);
-            notImportant.setAttribute('type', 'radio');
-            notImportant.setAttribute('name', 'prio' + task.taskId);
-            notImportant.setAttribute('value', 'notImportant');
-            if (task.priority == 'Urgent' || task.priority == 'urgent') {
-                urgent.checked = true;
-            } else if (
-                task.priority == 'Important' ||
-                task.priority == 'important'
-            ) {
-                important.checked = true;
-            } else {
-                notImportant.checked = true;
-            }
-            taskPrioritySpan.appendChild(urgentLabel);
-            taskPrioritySpan.appendChild(urgent);
-            taskPrioritySpan.appendChild(importantLabel);
-            taskPrioritySpan.appendChild(important);
-            taskPrioritySpan.appendChild(notImportantLabel);
-            taskPrioritySpan.appendChild(notImportant);
-            toExpand.appendChild(taskPrioritySpan);
+        const notImportant = document.createElement('input');
+        notImportant.classList.add('radioInputs' + task.taskId);
+        notImportant.setAttribute('type', 'radio');
+        notImportant.setAttribute('name', 'prio' + task.taskId);
+        notImportant.setAttribute('value', 'notImportant');
+        container.appendChild(notImportantLabel);
+        container.appendChild(notImportant);
+        if (
+            task.priority == 'NotImportant' ||
+            task.priority == 'notImportant'
+        ) {
+            notImportant.checked = true;
         }
-        createRadios(task);
-        let radios = document.getElementsByClassName(
-            'radioInputs' + task.taskId
-        );
-        Array.prototype.forEach.call(radios, (radio) => {
-            radio.addEventListener('click', () => {
-                const taskDiv = document.querySelector(
-                    "[data-task-index='" + task.taskId + "']"
-                );
+    }
 
-                if (radio.getAttribute('type') == 'radio') {
-                    if (taskDiv.classList.contains('urgent')) {
-                        taskDiv.classList.replace('urgent', radio.value);
-                        task.setPriority(radio.value);
-                        Storage.saveTodoList(todoList);
-                    } else if (taskDiv.classList.contains('important')) {
-                        taskDiv.classList.replace('important', radio.value);
-                        task.setPriority(radio.value);
-                        Storage.saveTodoList(todoList);
-                    } else {
-                        taskDiv.classList.replace('notImportant', radio.value);
-                        task.setPriority(radio.value);
-                        Storage.saveTodoList(todoList);
-                    }
+    function radioButtonListener(radio, task) {
+        radio.addEventListener('click', () => {
+            const taskDiv = document.querySelector(
+                "[data-task-index='" + task.taskId + "']"
+            );
+
+            if (radio.getAttribute('type') == 'radio') {
+                if (taskDiv.classList.contains('urgent')) {
+                    taskDiv.classList.replace('urgent', radio.value);
+                    task.setPriority(radio.value);
+                    Storage.saveTodoList(todoList);
+                } else if (taskDiv.classList.contains('important')) {
+                    taskDiv.classList.replace('important', radio.value);
+                    task.setPriority(radio.value);
+                    Storage.saveTodoList(todoList);
+                } else {
+                    taskDiv.classList.replace('notImportant', radio.value);
+                    task.setPriority(radio.value);
+                    Storage.saveTodoList(todoList);
                 }
-            });
+            }
         });
     }
 
@@ -346,7 +403,6 @@ const UserInterface = (function () {
         const createP = document.querySelector('.createProject');
         const createT = document.querySelector('.createTask');
         const deleteP = document.querySelector('.deleteProject');
-        const overlay = document.querySelector('.overlay');
 
         deleteT.forEach((button) => {
             button.addEventListener('click', () => {
@@ -359,28 +415,9 @@ const UserInterface = (function () {
             });
         });
 
-        overlay.addEventListener('click', () => {
-            const projectInput = document.querySelector('.projectForm');
-            const taskInput = document.querySelector('.taskForm');
-
-            if (projectInput == null) {
-                hedMain.removeChild(taskInput);
-            } else {
-                hedMain.removeChild(projectInput);
-            }
-
-            overlay.classList.remove('active');
-        });
-
-        createT.addEventListener('click', () => {
-            createTaskModal(hedMain);
-            overlay.classList.add('active');
-        });
-
-        createP.addEventListener('click', () => {
-            createProjectModal(hedMain);
-            overlay.classList.add('active');
-        });
+        overlayClickListener();
+        createProjectButtonListener(createP);
+        createTaskButtonListener(createT);
 
         deleteP.addEventListener('click', () => {
             const tasklist = document.querySelector('.tasklist');
@@ -399,8 +436,40 @@ const UserInterface = (function () {
         });
     }
 
+    function overlayClickListener() {
+        const overlay = document.querySelector('.overlay');
+        overlay.addEventListener('click', () => {
+            const projectInput = document.querySelector('.projectForm');
+            const taskInput = document.querySelector('.taskForm');
+
+            if (projectInput == null) {
+                hedMain.removeChild(taskInput);
+            } else {
+                hedMain.removeChild(projectInput);
+            }
+
+            overlay.classList.remove('active');
+        });
+    }
+
+    function createProjectButtonListener(button) {
+        const overlay = document.querySelector('.overlay');
+        button.addEventListener('click', () => {
+            createProjectModal(hedMain);
+            overlay.classList.add('active');
+        });
+    }
+
+    function createTaskButtonListener(button) {
+        const overlay = document.querySelector('.overlay');
+        button.addEventListener('click', () => {
+            createTaskModal(hedMain);
+            overlay.classList.add('active');
+        });
+    }
+
     function showHomepage() {
-        loadProjects();
+        UIProjectSetup();
         enableButtons();
     }
 
